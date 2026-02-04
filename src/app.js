@@ -9,7 +9,13 @@ const placementRoutes = require("./routes/placement.routes");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:4200',
+    'https://admin-dashboard-frontend-delta.vercel.app/'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
