@@ -6,13 +6,9 @@ const { authenticate, authorizeAdmin, authorizeOnlyAdmin } = require("../middlew
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", authenticate, logout);
-
-// Admin routes
 router.get("/users", authenticate, authorizeAdmin, getAllUsers);
 router.put("/users/role", authenticate, authorizeAdmin, updateUserRole);
 router.delete("/users/:userId", authenticate, authorizeAdmin, deleteUser);
-
-// Students route (Admin only)
 router.get("/students", authenticate, authorizeOnlyAdmin, getStudents);
 
 module.exports = router;

@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Activity = require("../models/activity.model");
 
-// Password validation: min 8 chars, at least one uppercase, one lowercase, one number
 const validatePassword = (password) => {
   const minLength = 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -12,7 +11,6 @@ const validatePassword = (password) => {
   return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumber;
 };
 
-// REGISTER - Accepts portalAccessLevel (TPC, STUDENT, DEPT_HEAD)
 exports.register = async (req, res) => {
   try {
     const { name, email, password, portalAccessLevel } = req.body;
@@ -46,8 +44,6 @@ exports.register = async (req, res) => {
     });
   }
 };
-
-// LOGIN
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -85,7 +81,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// LOGOUT
 exports.logout = async (req, res) => {
   try {
     await Activity.create({
@@ -101,10 +96,9 @@ exports.logout = async (req, res) => {
   }
 };
 
-// GET ALL USERS (Admin only)
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, '-password'); // Exclude password field
+    const users = await User.find({}, '-password'); 
     res.json(users);
   } catch (error) {
     res.status(500).json({
@@ -113,7 +107,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// UPDATE USER ROLE (Admin only)
 exports.updateUserRole = async (req, res) => {
   try {
     const { userId, role } = req.body;
@@ -144,8 +137,6 @@ exports.updateUserRole = async (req, res) => {
     });
   }
 };
-
-// DELETE USER (Admin only)
 exports.deleteUser = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -163,11 +154,9 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
-
-// GET STUDENTS (Admin only)
 exports.getStudents = async (req, res) => {
   try {
-    const students = await User.find({ role: 'STUDENT' }, '-password'); // Exclude password field
+    const students = await User.find({ role: 'STUDENT' }, '-password'); 
     res.json(students);
   } catch (error) {
     res.status(500).json({

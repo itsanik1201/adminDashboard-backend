@@ -1,6 +1,4 @@
 const Placement = require("../models/placement.model");
-
-// GET ALL PLACEMENTS
 exports.getAllPlacements = async (req, res) => {
   try {
     const placements = await Placement.find();
@@ -11,8 +9,6 @@ exports.getAllPlacements = async (req, res) => {
     });
   }
 };
-
-// ADD PLACEMENT
 exports.addPlacement = async (req, res) => {
   try {
     const { company, students, avgSalary, branch, year } = req.body;
@@ -36,8 +32,6 @@ exports.addPlacement = async (req, res) => {
     });
   }
 };
-
-// UPDATE PLACEMENT
 exports.updatePlacement = async (req, res) => {
   try {
     const { id } = req.params;
@@ -56,8 +50,6 @@ exports.updatePlacement = async (req, res) => {
     });
   }
 };
-
-// DELETE PLACEMENT
 exports.deletePlacement = async (req, res) => {
   try {
     const { id } = req.params;
