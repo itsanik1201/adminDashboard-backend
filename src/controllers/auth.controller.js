@@ -13,32 +13,58 @@ const validatePassword = (password) => {
 
 exports.register = async (req, res) => {
   try {
+    console.log('Registration attempt:', req.body);
     const { name, email, password, portalAccessLevel } = req.body;
     const role = portalAccessLevel || req.body.role || "STUDENT";
 
-    const existingUser = await User.findOne({ email });
+    // Sanitize inputs
+    const trimmedName = name.trim();
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Validate inputs
+    if (!trimmedName) {
+      return res.status(400).json({
+        message: "Name is required."
+      });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number."
+      });
+    }
+
+    console.log('Checking existing user for email:', normalizedEmail);
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({
         message: "An account with this email already exists. Please sign in instead."
       });
     }
 
+    console.log('Hashing password');
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    console.log('Creating user');
     const candidate = await User.create({
-      name,
-      email,
+      name: trimmedName,
+      email: normalizedEmail,
       password: hashedPassword,
       role
     });
 
+    console.log('User created:', candidate._id);
+
+    console.log('Creating activity');
     await Activity.create({
       type: "SIGNUP",
       userId: candidate._id
     });
 
+    console.log('Registration successful');
     res.status(201).json({ message: "Registration successful. You can now sign in." });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({
       message: "We couldn't complete your registration. Please try again in a moment."
     });
@@ -48,7 +74,9 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const candidate = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const candidate = await User.findOne({ email: normalizedEmail });
     if (!candidate) {
       return res.status(404).json({ message: "User not found. Please register first." });
     }
